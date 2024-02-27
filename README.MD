@@ -22,3 +22,13 @@ FT.CREATE socialMediaIndex ON HASH PREFIX 3 "twitter:" "facebook:" "instagram:" 
 
 SCAN 0 MATCH json\* COUNT 100
 ```
+
+Run
+
+```
+# update dependencies
+cargo upgrade
+
+cargo run
+RUST_LOG=debug cargo run
+```

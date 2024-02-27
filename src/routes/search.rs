@@ -12,6 +12,8 @@ pub async fn search(
         .await
     {
         Ok(result) => HttpResponse::Ok().json(result),
-        Err(e) => HttpResponse::InternalServerError().body(format!("Error searching items: {}", e)),
+        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
+            "error": format!("[Search] {}", e)
+        })),
     }
 }
