@@ -4,14 +4,14 @@ This document outlines the API endpoints provided by the Data Node project, deta
 
 ## Base URL
 
-All URLs referenced in the API documentation have the base path http://localhost/app/api
+All URLs referenced in the API documentation have the base path http://localhost/
 
 ## Endpoints
 
 ### Index
 
 ```
-curl --location 'http://localhost/app/api/index' \
+curl --location 'http://localhost/index' \
 --header 'Content-Type: application/json' \
 --data '{
     "index_name": "myIndex",
@@ -48,7 +48,7 @@ curl --location 'http://localhost/app/api/index' \
 ### Add
 
 ```
-curl --location 'http://localhost/app/api/add' \
+curl --location 'http://localhost/add' \
 --header 'Content-Type: application/json' \
 --data '{
     "source": "espn",
@@ -72,7 +72,7 @@ curl --location 'http://localhost/app/api/add' \
 ### Search
 
 ```
-curl --location 'http://localhost/app/api/search' \
+curl --location 'http://localhost/search' \
 --header 'Content-Type: application/json' \
 --data '{
     "index": "myIndex",

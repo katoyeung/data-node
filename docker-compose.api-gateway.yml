@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:v2.5
+    container_name: traefik-gateway
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080" # The Traefik dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - data-node
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: data-node
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      REDIS_URL: redis://redis:6379
+    networks:
+      - data-node
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=PathPrefix(`/app`)"
+      - "traefik.http.routers.app.entrypoints=web"
+      - "traefik.http.services.app.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.app-stripprefix.stripprefix.prefixes=/app"
+      - "traefik.http.routers.app.middlewares=app-stripprefix,compress,app-auth"
+      - "traefik.http.middlewares.app-auth.basicauth.users=user:$2y$05$2iFVQhWqcIlrYYWSY8nNBusUPbC/lOLMqhPnaMrPbNkoVnU/vpMbe"
+      - "traefik.http.middlewares.compress.compress=true"
+      # - "traefik.http.routers.app.middlewares=app-stripprefix,app-ratelimit"
+      # - "traefik.http.middlewares.app-ratelimit.ratelimit.average=100" # Average number of requests per period
+      # - "traefik.http.middlewares.app-ratelimit.ratelimit.burst=50" # Maximum number of requests allowed if exceeding the average rate
+      # - "traefik.http.middlewares.app-ratelimit.ratelimit.period=1m" # Period (in seconds, minutes, etc.) to apply the rate limit
+
+  redis:
+    image: redis/redis-stack-server:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+    volumes:
+      - redis-data:/data
+    networks:
+      - data-node
+
+networks:
+  data-node:
+
+volumes:
+  redis-data:
