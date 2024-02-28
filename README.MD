@@ -1,34 +1,70 @@
 # Data Node
 
-## Docker Operation
+Data Node is a robust data storage solution designed to support full-text search capabilities. It provides an API for efficient data retrieval and management, tailored for developers requiring scalable and searchable storage options.
 
+## Features
+
+- Full-text search support for complex queries
+- API interface for seamless integration with other services
+- Containerized environment for easy deployment and scalability
+
+## Getting Started
+
+These instructions will get your copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Docker and Docker Compose
+- Rust and Cargo (latest stable version)
+
+### Local Development Build
+
+To build the project locally with Docker, use the following command:
+
+```bash
+docker-compose up -d --build
 ```
-docker build -t data-node .
 
-docker run -p 8080:8080 data-node
+This command builds the Docker images and starts the containers in detached mode.
 
-docker run -v ./data/:/data -d --name redis-stack-server -p 16379:6379 -e REDIS_ARGS="--requirepass password" redis/redis-stack-server:latest
-```
+### Running Locally
 
-## Redis Operation
+To run the Data Node project on your local machine, follow these steps:
 
-```
-FT.CREATE twitterIndex ON HASH PREFIX 1 "twitter:" SCHEMA userId TEXT SORTABLE tweet TEXT content TEXT createdAt DATE SORTABLE hashtags TAG SORTABLE mentions TAG SORTABLE
+1. Update dependencies:
 
-FT.DROPINDEX YourIndexName
-FT.CREATE YourIndexName ON JSON PREFIX 1 json: LANGUAGE chinese SCHEMA $.post_title as post_title TEXT $.post_message as post_message TEXT $.post_timestamp as post_timestamp NUMERIC SORTABLE $created_ts.created_ts NUMERIC SORTABLE
-
-FT.CREATE socialMediaIndex ON HASH PREFIX 3 "twitter:" "facebook:" "instagram:" SCHEMA source TEXT SORTABLE content TEXT createdAt DATE SORTABLE hashtags TAG SORTABLE mentions TAG SORTABLE
-
-SCAN 0 MATCH json\* COUNT 100
-```
-
-Run
-
-```
-# update dependencies
+```bash
 cargo upgrade
+```
 
+2. Run the project:
+
+```bash
 cargo run
+```
+
+Alternatively, to run the project with debug logging enabled:
+
+```bash
 RUST_LOG=debug cargo run
 ```
+
+### API Documentation
+
+For detailed information on the API endpoints and their usage, refer to the `docs/api.md` file.
+
+## Contributing
+
+We welcome contributions to the Data Node project! Please read `CONTRIBUTING.md` for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/yourproject/datnode/tags).
+
+## Acknowledgements
+
+This project utilizes Redis Stack, developed by Redis Labs and its open-source community.
+
+This project is intended for development and testing purposes and should be used responsibly.

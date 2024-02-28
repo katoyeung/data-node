@@ -1,0 +1,33 @@
+# Ignore all files by default
+**
+
+# Allow files and directories necessary for the build
+!Cargo.toml
+!Cargo.lock
+!src/
+!migrations/
+
+# Include configuration files or other necessary files for the build, if any
+# !config/
+# !.env
+
+# Exclude build and compilation artifacts
+/target/
+**/*.rs.bk
+
+# Exclude version control system directories
+.git/
+.gitignore
+
+# Exclude text editor/IDE specific files and directories
+**/*.swp
+**/*.swo
+*.code-workspace
+.vscode/
+.idea/
+
+# Exclude other common directories that are not needed for the build
+logs/
+tmp/
+test/
+examples/

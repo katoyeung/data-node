@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SearchRequest {
-    pub source: Option<String>,
+    pub index: Option<String>,
     pub q: Option<String>,
     pub offset: Option<i64>,
     pub limit: Option<i64>,

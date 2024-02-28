@@ -241,7 +241,7 @@ impl RedisService {
     pub async fn search(&self, req: SearchRequest) -> Result<Value, Box<dyn std::error::Error>> {
         let process_start_time = Instant::now();
 
-        let index_name = req.source.ok_or("The 'source' field is required.")?;
+        let index_name = req.index.ok_or("The 'index' field is required.")?;
 
         let query = req.q.unwrap_or_else(|| "*".to_string());
         let offset = req.offset.unwrap_or(0); // Convert to string for command args

@@ -15,5 +15,5 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             .route("/search", web::post().to(search::search))
             .route("/index", web::post().to(index::index)),
     )
-    .route("/", web::get().to(hello::greet)); // Moved this line out of the `.service()` call
+    .route("/", web::get().to(hello::greet));
 }
