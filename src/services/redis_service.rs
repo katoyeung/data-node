@@ -197,45 +197,51 @@ impl RedisService {
         }
     }
 
-    pub async fn add(&self, mut data: Value) -> Result<Value, Box<dyn std::error::Error>> {
-        // Validate the presence and content of the "source" field
-        if let Some(source) = data.get("source").and_then(|s| s.as_str()) {
-            if source.trim().is_empty() {
-                // Return an error response if "source" is empty
-                return Err("The 'source' field is missing or empty.".into());
-            }
-        } else {
-            // Return an error if "source" is missing
-            return Err("The 'source' field is required.".into());
-        }
-
+    pub async fn add(&self, data: Vec<Value>) -> Result<Vec<Value>, Box<dyn Error>> {
         let mut con = self.pool.get().await?;
 
-        let source = data["source"]
-            .as_str()
-            .unwrap()
-            .to_lowercase()
-            .replace(" ", "_");
-        let key = format!("{}:{}", source, Uuid::new_v4());
-        let created_at = chrono::Utc::now().to_rfc3339();
-        let created_ts = chrono::Utc::now().timestamp();
+        let mut responses = Vec::new();
 
-        data["key"] = json!(key);
-        data["created_at"] = json!(created_at);
-        data["created_ts"] = json!(created_ts);
+        for mut record in data {
+            // Validate the presence and content of the "source" field
+            if let Some(source) = record.get("source").and_then(|s| s.as_str()) {
+                if source.trim().is_empty() {
+                    // Continue to next record if "source" is empty, or return an error based on your error handling policy
+                    continue;
+                }
+            } else {
+                // Continue to next record if "source" is missing, or return an error based on your error handling policy
+                continue;
+            }
 
-        // Convert the modified JSON back to a string
-        let json_str = serde_json::to_string(&data).unwrap();
+            let source = record["source"]
+                .as_str()
+                .unwrap()
+                .to_lowercase()
+                .replace(" ", "_");
+            let key = format!("{}:{}", source, Uuid::new_v4());
+            let created_at = chrono::Utc::now().to_rfc3339();
+            let created_ts = chrono::Utc::now().timestamp();
 
-        // Store the JSON in Redis using RedisJSON command
-        let _: () = redis::cmd("JSON.SET")
-            .arg(&key)
-            .arg("$")
-            .arg(&json_str)
-            .query_async(&mut *con)
-            .await?;
+            record["key"] = json!(key);
+            record["created_at"] = json!(created_at);
+            record["created_ts"] = json!(created_ts);
 
-        Ok(json!({"status": "success", "key": key}))
+            // Convert the modified JSON back to a string
+            let json_str = serde_json::to_string(&record).unwrap();
+
+            // Store the JSON in Redis using RedisJSON command
+            let _: () = redis::cmd("JSON.SET")
+                .arg(&key)
+                .arg("$")
+                .arg(&json_str)
+                .query_async(&mut *con)
+                .await?;
+
+            responses.push(json!({"status": "success", "key": key}));
+        }
+
+        Ok(responses)
     }
 
     pub async fn search(&self, req: SearchRequest) -> Result<Value, Box<dyn std::error::Error>> {

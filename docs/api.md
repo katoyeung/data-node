@@ -50,23 +50,40 @@ curl --location 'http://localhost/index' \
 ```
 curl --location 'http://localhost/add' \
 --header 'Content-Type: application/json' \
---data '{
-    "source": "espn",
-    "medium": "online news platform",
-    "site": "ESPN",
-    "author": "John Doe",
-    "channel": "NBA",
-    "post_link": "https://espn.com/news/basketball/nba-highlight-of-the-week",
-    "post_title": "NBA Highlight of the Week: Spectacular Dunk by LeBron James",
-    "post_message": "In last night'\''s game, LeBron James secured the win for the Lakers with a spectacular dunk in the final seconds, marking a highlight moment of the week.",
-    "post_date": "2024-02-27T09:48:52Z",
-    "post_timestamp": 1709027273,
-    "comment_count": 120,
-    "reaction_count": 350,
-    "share_count": 45,
-    "view_count": 5000
-}
-'
+--data '[
+    {
+        "source": "espn",
+        "medium": "online news platform",
+        "site": "ESPN",
+        "author": "John Doe",
+        "channel": "NBA",
+        "post_link": "https://espn.com/news/basketball/nba-highlight-of-the-week",
+        "post_title": "NBA Highlight of the Week: Spectacular Dunk by LeBron James",
+        "post_message": "In last night'\''s game, LeBron James secured the win for the Lakers with a spectacular dunk in the final seconds, marking a highlight moment of the week.",
+        "post_date": "2024-02-27T09:48:52Z",
+        "post_timestamp": 1709027273,
+        "comment_count": 120,
+        "reaction_count": 350,
+        "share_count": 45,
+        "view_count": 5000
+    },
+    {
+        "source": "espn",
+        "medium": "online news platform",
+        "site": "ESPN",
+        "author": "John Doe",
+        "channel": "NBA",
+        "post_link": "https://espn.com/news/basketball/nba-highlight-of-the-week",
+        "post_title": "NBA Highlight of the Week: Spectacular Dunk by LeBron James",
+        "post_message": "In last night'\''s game, LeBron James secured the win for the Lakers with a spectacular dunk in the final seconds, marking a highlight moment of the week.",
+        "post_date": "2024-02-27T09:48:52Z",
+        "post_timestamp": 1709027273,
+        "comment_count": 120,
+        "reaction_count": 350,
+        "share_count": 45,
+        "view_count": 5000
+    }
+]'
 ```
 
 ### Search
