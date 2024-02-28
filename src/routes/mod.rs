@@ -7,13 +7,10 @@ pub mod status;
 use actix_web::web;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        web::scope("/api")
-            .route("/status", web::get().to(status::status_info))
-            .route("/status/{index}", web::get().to(status::status_ft_info))
-            .route("/add", web::post().to(add::add))
-            .route("/search", web::post().to(search::search))
-            .route("/index", web::post().to(index::index)),
-    )
-    .route("/", web::get().to(hello::greet));
+    cfg.service(web::resource("/status").route(web::get().to(status::status_info)))
+        .service(web::resource("/status/{index}").route(web::get().to(status::status_ft_info)))
+        .service(web::resource("/add").route(web::post().to(add::add)))
+        .service(web::resource("/search").route(web::post().to(search::search)))
+        .service(web::resource("/index").route(web::post().to(index::index)))
+        .route("/", web::get().to(hello::greet));
 }
