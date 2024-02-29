@@ -1,3 +1,4 @@
+use crate::models::delete_request::DeleteRequest;
 use crate::models::search_request::SearchRequest;
 use crate::utils::date_utils::parse_date_time_with_timezone;
 use log::debug;
@@ -365,5 +366,55 @@ impl RedisService {
         });
 
         Ok(response)
+    }
+
+    pub async fn delete(&self, req: DeleteRequest) -> Result<Value, Box<dyn Error>> {
+        if req.source.is_none()
+            && (req.keys.is_none() || req.keys.as_ref().map(|k| k.is_empty()).unwrap_or(true))
+        {
+            return Err("Either source or keys must be provided and not empty.".into());
+        }
+
+        let mut con = self.pool.get().await?;
+
+        // If a prefix is provided, delete keys matching the prefix.
+        if let Some(source) = &req.source {
+            let mut cursor = 0;
+            loop {
+                let (next_cursor, keys): (i64, Vec<String>) = redis::cmd("SCAN")
+                    .arg(cursor)
+                    .arg("MATCH")
+                    .arg(format!("{}:*", source))
+                    .arg("COUNT")
+                    .arg(1000) // Adjust count based on your use case
+                    .query_async(&mut *con)
+                    .await?;
+
+                if !keys.is_empty() {
+                    // Using UNLINK instead of DEL for potentially non-blocking deletion in newer Redis versions
+                    let _: () = redis::cmd("UNLINK")
+                        .arg(keys)
+                        .query_async(&mut *con)
+                        .await?;
+                }
+
+                cursor = next_cursor;
+                if cursor == 0 {
+                    break;
+                }
+            }
+        }
+
+        // If specific keys are provided, delete them directly.
+        if let Some(keys) = &req.keys {
+            if !keys.is_empty() {
+                let _: () = redis::cmd("UNLINK")
+                    .arg(keys)
+                    .query_async(&mut *con)
+                    .await?;
+            }
+        }
+
+        Ok(json!({"status": "success"}))
     }
 }

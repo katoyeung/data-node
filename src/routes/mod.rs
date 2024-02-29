@@ -1,4 +1,5 @@
 pub mod add;
+pub mod delete;
 pub mod hello;
 pub mod index;
 pub mod search;
@@ -12,5 +13,6 @@ pub fn config(cfg: &mut web::ServiceConfig) {
         .service(web::resource("/add").route(web::post().to(add::add)))
         .service(web::resource("/search").route(web::post().to(search::search)))
         .service(web::resource("/index").route(web::post().to(index::index)))
+        .service(web::resource("/delete").route(web::post().to(delete::delete)))
         .route("/", web::get().to(hello::greet));
 }
