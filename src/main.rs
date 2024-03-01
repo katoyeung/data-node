@@ -6,6 +6,7 @@ mod utils;
 
 use crate::config::redis_config::create_redis_pool;
 use crate::services::redis_service::RedisService;
+use actix_web::middleware::Compress;
 use actix_web::{web, App, HttpServer};
 
 pub struct AppState {
@@ -29,6 +30,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
+            .wrap(Compress::default())
             .app_data(app_data.clone())
             .configure(routes::config)
     })
